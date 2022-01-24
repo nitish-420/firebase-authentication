@@ -64,7 +64,8 @@ function CreateUserName(props){
             });
             await db.collection('userNames').doc(userName).set({
                 userID: user.uid,
-                email:user.email
+                email:user.email,
+                name:user.name
             });
 
             setUser((prev)=>{

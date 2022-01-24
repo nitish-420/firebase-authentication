@@ -38,10 +38,11 @@ const ResponsiveAppBar = (props) => {
 	};
 
 	const handleLogOut=async(e)=>{
+		e.preventDefault()
 		try{
-			e.preventDefault()
 			await auth.signOut()
-			setUser(null);
+			await setUser(null);
+			history.push("/login")
 
 		}
 		catch(e){
@@ -112,7 +113,7 @@ const ResponsiveAppBar = (props) => {
 						Logout
 					</button>
 					:
-					<button className="btn btn-primary me-4" onClick={handleSignUp}>
+					<button className="btn btn-warning me-4" onClick={handleSignUp}>
 						SignUp
 					</button>
 				}

@@ -1,5 +1,4 @@
-import React,{useState} from "react"
-
+import React,{ useState} from "react"
 import { auth ,db, googleProvider} from "../firebase";
 import {useHistory} from 'react-router-dom'
 
@@ -15,6 +14,7 @@ function Login(props){
             password:""
         }
     )
+
     // login with userName is hard part so doing this login with email is easy one.
     
     function handleChange(event){
@@ -34,17 +34,18 @@ function Login(props){
             let userName=data.userName.trim()
             let password=data.password.trim()
 
-            let email=(await db.collection("userNames").doc(userName).get()).data().email
+            let dataFromUsername=(await db.collection("userNames").doc(userName).get()).data()
+            let email=dataFromUsername.email
+            let name=dataFromUsername.name
             
             let res=await auth.signInWithEmailAndPassword(email,password)
             setUser({
                 userName:userName,
-                name:res.user.displayName,
+                name:name,
                 email:res.user.email,
                 photoURL:res.user.photoURL,
                 emailVerified:res.user.emailVerified
             })
-
             history.push("/")
 
         }catch(e){
@@ -64,9 +65,13 @@ function Login(props){
             catch(e){
                 // let userName=null
             }
+
+            let dataFromUsername=(await db.collection("userNames").doc(userName).get()).data()
+            let name=dataFromUsername.name
+
             if(!userName){
-                setUser({
-                    name:res.user.displayName,
+                await setUser({
+                    name:name,
                     email:res.user.email,
                     photoURL:res.user.photoURL,
                     emailVerified:res.user.emailVerified,
@@ -75,9 +80,9 @@ function Login(props){
                 history.push("/createusername")
             }
             else{
-                setUser({
+                await setUser({
                     userName:userName,
-                    name:res.user.displayName,
+                    name:name,
                     email:res.user.email,
                     photoURL:res.user.photoURL,
                     emailVerified:res.user.emailVerified,
@@ -113,6 +118,9 @@ function Login(props){
                         </div>
                         <div className="mb-3 row mx-auto">
                             <button type="submit" onClick={loginWithGoogle} className="btn  mt-3 btn-primary col-5 mx-auto">Sign In with Google</button>
+                        </div>
+                        <div className="mb-3 row mx-auto">
+                            <button type="submit" onClick={(e)=>{e.preventDefault();history.push("/forgotpassword")}} className="btn  mt-3 btn-danger col-5 mx-auto">Forgot Password</button>
                         </div>
                     </form>
                 </div>

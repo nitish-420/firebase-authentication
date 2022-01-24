@@ -6,6 +6,7 @@ import Signup from "./Components/Signup";
 import CreateUserName from "./Components/CreateUserName"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {useState} from "react"
+import ForgotPassword from "./Components/ForgotPassword";
 
 function App() {
 
@@ -28,6 +29,9 @@ function App() {
 					</Route>
 					<Route exact path="/createusername">
 						<CreateUserName user={user} setUser={setUser}/>
+					</Route>
+					<Route exact path="/forgotpassword">
+						<ForgotPassword />
 					</Route>
 				</Switch>
 			</Router>

@@ -14,6 +14,7 @@ function Signup(props){
     const [data,setData]=useState(
         {
             userName:"",
+            name:"",
             email:"",
             password:""
         }
@@ -58,6 +59,7 @@ function Signup(props){
                 return;
             }
             let userName=data.userName.trim()
+            let name=data.name.trim()
             let email=data.email.trim()
             let password=data.password.trim()
             let res=await auth.createUserWithEmailAndPassword(email,password);
@@ -67,17 +69,21 @@ function Signup(props){
             });
             await db.collection('userNames').doc(userName).set({
                 userID: res.user.uid,
+                name:name,
                 email:email
                 // adding this so that by using this I can login with username
             });
+            await res.user.updateProfile( {
+                displayName: name})
 
             await res.user.sendEmailVerification();
 
             setUser({
                 userName:userName,
-                name:res.user.displayName,
-                email:res.user.email,
+                name:name,
+                email:email,
                 photoURL:res.user.photoURL,
+                emailVerified:res.user.emailVerified,
                 uid:res.user.uid
             })
             // comment above line is after verification login it is allowed.
@@ -97,10 +103,15 @@ function Signup(props){
             <div className=" row">
                 <div className="mt-5 col-sm-10 col-md-8 mx-auto border border-5 border-warning text-muted">
                     <h1 className="text-center mt-1 text-white">Sign Up Page</h1>
-                    <form className="container">
+                    <form className="container" autoComplete="off">
                         <div className="mb-2 ">
-                            <label htmlFor="userName" className="form-label">User name</label>
-                            <input type="text" onChange={handleChange} className={`form-control ${data.userName.length && validUserName ? " text-success border-success":"text-danger" }`} name="userName" id="userName" aria-describedby="userName" spellCheck={false} value={data.userName}/>
+                            <label htmlFor="userName" className="form-label">Username</label>
+                            {/* <input type="hidden" onChange={handleChange} className={`form-control`} name="userName" id="userNames" aria-describedby="userName" spellCheck={false} value={data.userName} />  this line was added so chrome doesn't autofills it but in password field by adding autoComplete="new-password" this issue is solved*/}
+                            <input type="text" onChange={handleChange} className={`form-control ${data.userName.length && validUserName ? " text-success border-success":"text-danger" }`} name="userName" id="userName" aria-describedby="userName" spellCheck={false} value={data.userName} />
+                        </div>
+                        <div className="mb-2 ">
+                            <label htmlFor="name" className="form-label">Full Name</label>
+                            <input type="text" onChange={handleChange} className={`form-control `} name="name" id="name" aria-describedby="name" spellCheck={false} value={data.name}/>
                         </div>
                         <div className="mb-2">
                             <label htmlFor="email" className="form-label">Email address</label>
@@ -108,13 +119,13 @@ function Signup(props){
                         </div>
                         <div className="mb-2">
                             <label htmlFor="password" className="form-label">Password</label>
-                            <input type="password" onChange={handleChange} className="form-control" id="password" name="password" value={data.password}/>
+                            <input type="password" autoComplete="new-password" onChange={handleChange} className="form-control" id="password" name="password" value={data.password}/>
                         </div>
                         <div className="mb-3 row mx-auto">
                             <button type="submit" onClick={clicked} className="btn  mt-3 btn-warning col-5 mx-auto">Sign Up</button>
                         </div>
                         <div className="mb-3 row mx-auto">
-                            <button type="submit" onClick={()=>history.push("/login")} className="btn  mt-3 btn-primary col-5 mx-auto">Log In</button>
+                            <button type="submit" onClick={(e)=> {e.preventDefault(); history.push("/login")}} className="btn  mt-3 btn-primary col-5 mx-auto">Log In</button>
                         </div>
                     </form>
                 </div>
