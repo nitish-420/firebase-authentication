@@ -66,12 +66,10 @@ function Login(props){
                 // let userName=null
             }
 
-            let dataFromUsername=(await db.collection("userNames").doc(userName).get()).data()
-            let name=dataFromUsername.name
-
+            
             if(!userName){
                 await setUser({
-                    name:name,
+                    name:res.user.displayName,
                     email:res.user.email,
                     photoURL:res.user.photoURL,
                     emailVerified:res.user.emailVerified,
@@ -80,6 +78,8 @@ function Login(props){
                 history.push("/createusername")
             }
             else{
+                let dataFromUsername=(await db.collection("userNames").doc(userName).get()).data()
+                let name=dataFromUsername.name
                 await setUser({
                     userName:userName,
                     name:name,
